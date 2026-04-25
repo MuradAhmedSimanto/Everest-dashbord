@@ -614,3 +614,12 @@ input,select,textarea{font-family:'Rajdhani',sans-serif}
   .profile-stats-bar{flex-wrap:wrap}
   .psb-item{min-width:45%}
 }
+
+.brand-logo {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ff0000;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+}
