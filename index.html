@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Everest — Social Dashboard</title>
+<link rel="stylesheet" href="style.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-icon">⛰</div>
+    <div class="brand-text">EVEREST</div>
+  </div>
+  <div class="sidebar-founder" id="sidebarFounder" onclick="openPage('founder-profile')">
+    <div class="sf-cover" id="sfCover"></div>
+    <div class="sf-body">
+      <img class="sf-pic" id="sfPic" src="" alt=""/>
+      <div class="sf-info">
+        <div class="sf-name" id="sfName">Murad Ahmed Simanto</div>
+        <div class="sf-role"><i class="fas fa-mountain"></i> Founder</div>
+        <div class="sf-status"><span class="sdot" id="sfDot"></span><span id="sfStatusTxt">Active</span></div>
+      </div>
+    </div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">MAIN</div>
+    <a class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i><span>Dashboard</span></a>
+    <a class="nav-item" data-page="analytics"><i class="fas fa-chart-line"></i><span>Analytics</span></a>
+    <a class="nav-item" data-page="posts"><i class="fas fa-newspaper"></i><span>Posts</span></a>
+    <div class="nav-section-label">PEOPLE</div>
+    <a class="nav-item" data-page="users"><i class="fas fa-users"></i><span>Users</span></a>
+    <a class="nav-item" data-page="messages"><i class="fas fa-comments"></i><span>Messages</span></a>
+    <a class="nav-item" data-page="notifications"><i class="fas fa-bell"></i><span>Notifications</span><span class="nav-badge" id="notifBadge">3</span></a>
+    <div class="nav-section-label">ACCOUNT</div>
+    <a class="nav-item" data-page="founder-profile"><i class="fas fa-user-crown"></i><span>My Profile</span></a>
+    <a class="nav-item" data-page="settings"><i class="fas fa-sliders-h"></i><span>Settings</span></a>
+  </nav>
+  <div class="sidebar-bottom">
+    <button class="theme-btn" id="themeBtn"><i class="fas fa-moon" id="themeIcon"></i><span id="themeLabel">Dark Mode</span></button>
+  </div>
+</aside>
+
+<!-- OVERLAY for mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- MAIN -->
+<div class="main-wrap">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    <div class="top-search">
+      <i class="fas fa-search"></i>
+      <input type="text" id="globalSearch" placeholder="Search users by name or ID…" autocomplete="off"/>
+      <kbd>⌘K</kbd>
+      <div class="search-dropdown" id="searchDropdown"></div>
+    </div>
+    <div class="topbar-right">
+      <button class="top-icon-btn" onclick="openPage('notifications')"><i class="fas fa-bell"></i><span class="notif-dot"></span></button>
+      <button class="top-icon-btn" onclick="openPage('messages')"><i class="fas fa-comment-dots"></i></button>
+      <div class="top-avatar" id="topAvatar" onclick="openPage('founder-profile')">
+        <img id="topAvatarImg" src="" alt=""/>
+        <span class="online-ring"></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PAGE: DASHBOARD -->
+  <div class="page active" id="page-dashboard">
+    <div class="page-header">
+      <div><h1 class="page-title">Dashboard</h1><p class="page-sub">Welcome back, <span id="dashWelcome">Murad</span> 👋</p></div>
+      <div class="page-actions">
+        <button class="btn-outline" onclick="openPage('analytics')"><i class="fas fa-chart-bar"></i> Analytics</button>
+        <button class="btn-red" onclick="openAddUserModal()"><i class="fas fa-plus"></i> Add User</button>
+      </div>
+    </div>
+
+    <!-- OVERVIEW STATS -->
+    <div class="stats-row" id="statsRow"></div>
+
+    <!-- CHARTS ROW -->
+    <div class="charts-row">
+      <div class="chart-card wide">
+        <div class="chart-card-header"><h3>Growth Overview</h3><select id="growthFilter"><option value="7">Last 7 days</option><option value="30" selected>Last 30 days</option><option value="90">Last 90 days</option></select></div>
+        <canvas id="growthChart" height="90"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header"><h3>Engagement</h3></div>
+        <canvas id="engagementChart" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- RECENT USERS -->
+    <div class="section-block">
+      <div class="section-block-header">
+        <h3>Recent Users</h3>
+        <a class="see-all" onclick="openPage('users')">See All <i class="fas fa-arrow-right"></i></a>
+      </div>
+      <div class="recent-users-table" id="recentUsersTable"></div>
+    </div>
+  </div>
+
+  <!-- PAGE: FOUNDER PROFILE -->
+  <div class="page" id="page-founder-profile">
+    <div class="profile-page-wrap">
+      <div class="profile-cover-area" id="founderCoverArea">
+        <label class="cover-upload-btn" for="founderCoverInput"><i class="fas fa-camera"></i> Change Cover</label>
+        <input type="file" id="founderCoverInput" accept="image/*" hidden/>
+      </div>
+      <div class="profile-main-card">
+        <div class="profile-pic-section">
+          <div class="profile-pic-wrap">
+            <img class="profile-big-pic" id="founderBigPic" src="" alt=""/>
+            <label class="pic-upload-btn" for="founderPicInput"><i class="fas fa-pen"></i></label>
+            <input type="file" id="founderPicInput" accept="image/*" hidden/>
+          </div>
+          <div class="profile-identity">
+            <h2 id="fpName">Murad Ahmed Simanto</h2>
+            <div class="founder-badge-large">⛰ FOUNDER &amp; CEO</div>
+            <p id="fpEmail" class="fp-email"><i class="fas fa-envelope"></i> murad@everest.com</p>
+            <p id="fpJoined" class="fp-joined"><i class="fas fa-calendar-alt"></i> Joined January 2021</p>
+            <div class="fp-status-row">
+              <span class="sdot large" id="fpStatusDot"></span>
+              <span id="fpStatusTxt">Active</span>
+            </div>
+          </div>
+        </div>
+        <!-- PROFILE STATS -->
+        <div class="profile-stats-bar" id="profileStatsBar"></div>
+        <!-- PROFILE BIO/EXTRA -->
+        <div class="profile-details-grid" id="profileDetailsGrid"></div>
+        <!-- PROFILE SOCIAL LINKS -->
+        <div class="profile-social-links" id="profileSocialLinks"></div>
+        <!-- QUICK ACTIONS -->
+        <div class="profile-actions-row">
+          <button class="btn-red" onclick="openPage('settings')"><i class="fas fa-edit"></i> Edit Profile</button>
+          <button class="btn-outline" onclick="copyProfileLink()"><i class="fas fa-link"></i> Copy Link</button>
+          <button class="btn-outline" onclick="exportProfile()"><i class="fas fa-download"></i> Export</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: ANALYTICS -->
+  <div class="page" id="page-analytics">
+    <div class="page-header"><h1 class="page-title">Analytics</h1><p class="page-sub">Platform performance overview</p></div>
+    <div class="analytics-grid" id="analyticsGrid"></div>
+    <div class="charts-row" style="margin-top:20px">
+      <div class="chart-card wide">
+        <div class="chart-card-header"><h3>Monthly Activity</h3></div>
+        <canvas id="monthlyChart" height="90"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-card-header"><h3>User Status Distribution</h3></div>
+        <canvas id="statusPieChart" height="160"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: POSTS -->
+  <div class="page" id="page-posts">
+    <div class="page-header">
+      <div><h1 class="page-title">Posts</h1><p class="page-sub">All social media posts</p></div>
+      <button class="btn-red" onclick="openAddPostModal()"><i class="fas fa-plus"></i> New Post</button>
+    </div>
+    <div class="posts-container" id="postsContainer"></div>
+  </div>
+
+  <!-- PAGE: USERS -->
+  <div class="page" id="page-users">
+    <div class="page-header">
+      <div><h1 class="page-title">Users</h1><p class="page-sub" id="userCountLabel">0 users registered</p></div>
+      <div class="page-actions">
+        <select class="filter-select" id="userStatusFilter"><option value="all">All Status</option><option value="active">Active</option><option value="away">Away</option><option value="busy">Busy</option><option value="offline">Offline</option></select>
+        <button class="btn-red" onclick="openAddUserModal()"><i class="fas fa-plus"></i> Add User</button>
+      </div>
+    </div>
+    <div class="users-grid" id="usersGrid"></div>
+  </div>
+
+  <!-- PAGE: MESSAGES -->
+  <div class="page" id="page-messages">
+    <div class="page-header"><h1 class="page-title">Messages</h1></div>
+    <div class="messages-wrap">
+      <div class="msg-list" id="msgList"></div>
+      <div class="msg-chat" id="msgChat">
+        <div class="msg-chat-empty"><i class="fas fa-comment-dots"></i><p>Select a conversation</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAGE: NOTIFICATIONS -->
+  <div class="page" id="page-notifications">
+    <div class="page-header"><h1 class="page-title">Notifications</h1><button class="btn-outline" onclick="clearNotifs()">Clear All</button></div>
+    <div class="notif-list" id="notifList"></div>
+  </div>
+
+  <!-- PAGE: SETTINGS -->
+  <div class="page" id="page-settings">
+    <div class="page-header"><h1 class="page-title">Settings</h1><p class="page-sub">Manage your account & preferences</p></div>
+    <div class="settings-layout">
+      <div class="settings-tabs" id="settingsTabs">
+        <button class="stab active" data-tab="profile">👤 Profile</button>
+        <button class="stab" data-tab="social">🔗 Social Links</button>
+        <button class="stab" data-tab="stats">📊 Stats</button>
+        <button class="stab" data-tab="appearance">🎨 Appearance</button>
+        <button class="stab" data-tab="privacy">🔒 Privacy</button>
+        <button class="stab" data-tab="danger">⚠️ Danger Zone</button>
+      </div>
+      <div class="settings-content">
+        <!-- PROFILE TAB -->
+        <div class="settings-tab-panel active" id="stab-profile">
+          <h3 class="stab-title">Profile Information</h3>
+          <div class="settings-pic-row">
+            <img id="settingsPicPreview" src="" class="settings-pic-preview"/>
+            <div>
+              <label class="btn-outline small" for="settingsProfilePic"><i class="fas fa-upload"></i> Upload Photo</label>
+              <input type="file" id="settingsProfilePic" accept="image/*" hidden/>
+              <p class="hint">JPG, PNG. Max 5MB</p>
+            </div>
+          </div>
+          <div class="settings-pic-row" style="margin-top:12px">
+            <img id="settingsCoverPreview" src="" class="settings-cover-preview"/>
+            <div>
+              <label class="btn-outline small" for="settingsCoverPic"><i class="fas fa-image"></i> Upload Cover</label>
+              <input type="file" id="settingsCoverPic" accept="image/*" hidden/>
+              <p class="hint">Recommended 1200×400px</p>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group"><label>Full Name *</label><input type="text" id="sName" placeholder="Murad Ahmed Simanto"/></div>
+            <div class="form-group"><label>Username</label><input type="text" id="sUsername" placeholder="@simanto"/></div>
+            <div class="form-group"><label>Email *</label><input type="email" id="sEmail" placeholder="murad@everest.com"/></div>
+            <div class="form-group"><label>Phone</label><input type="tel" id="sPhone" placeholder="+880 1700 000000"/></div>
+            <div class="form-group"><label>Location</label><input type="text" id="sLocation" placeholder="Dhaka, Bangladesh"/></div>
+            <div class="form-group"><label>Website</label><input type="url" id="sWebsite" placeholder="https://everest.social"/></div>
+            <div class="form-group"><label>Date of Birth</label><input type="date" id="sDob"/></div>
+            <div class="form-group"><label>Joined Date</label><input type="date" id="sJoined"/></div>
+            <div class="form-group full"><label>Bio</label><textarea id="sBio" rows="3" placeholder="Tell your story…"></textarea></div>
+          </div>
+        </div>
+        <!-- SOCIAL TAB -->
+        <div class="settings-tab-panel" id="stab-social">
+          <h3 class="stab-title">Social Media Links</h3>
+          <div class="form-grid">
+            <div class="form-group"><label><i class="fab fa-facebook" style="color:#1877f2"></i> Facebook</label><input type="url" id="sFacebook" placeholder="https://facebook.com/…"/></div>
+            <div class="form-group"><label><i class="fab fa-instagram" style="color:#e1306c"></i> Instagram</label><input type="url" id="sInstagram" placeholder="https://instagram.com/…"/></div>
+            <div class="form-group"><label><i class="fab fa-twitter" style="color:#1da1f2"></i> Twitter / X</label><input type="url" id="sTwitter" placeholder="https://twitter.com/…"/></div>
+            <div class="form-group"><label><i class="fab fa-youtube" style="color:#ff0000"></i> YouTube</label><input type="url" id="sYoutube" placeholder="https://youtube.com/…"/></div>
+            <div class="form-group"><label><i class="fab fa-linkedin" style="color:#0a66c2"></i> LinkedIn</label><input type="url" id="sLinkedin" placeholder="https://linkedin.com/…"/></div>
+            <div class="form-group"><label><i class="fab fa-tiktok"></i> TikTok</label><input type="url" id="sTiktok" placeholder="https://tiktok.com/…"/></div>
+            <div class="form-group"><label><i class="fab fa-github"></i> GitHub</label><input type="url" id="sGithub" placeholder="https://github.com/…"/></div>
+            <div class="form-group"><label><i class="fab fa-telegram" style="color:#229ed9"></i> Telegram</label><input type="url" id="sTelegram" placeholder="https://t.me/…"/></div>
+          </div>
+        </div>
+        <!-- STATS TAB -->
+        <div class="settings-tab-panel" id="stab-stats">
+          <h3 class="stab-title">Social Stats</h3>
+          <div class="form-grid">
+            <div class="form-group"><label>Total Posts</label><input type="number" id="sPosts" min="0" placeholder="0"/></div>
+            <div class="form-group"><label>Followers</label><input type="number" id="sFollowers" min="0" placeholder="0"/></div>
+            <div class="form-group"><label>Following</label><input type="number" id="sFollowing" min="0" placeholder="0"/></div>
+            <div class="form-group"><label>Likes Received</label><input type="number" id="sLikes" min="0" placeholder="0"/></div>
+            <div class="form-group"><label>Comments</label><input type="number" id="sComments" min="0" placeholder="0"/></div>
+            <div class="form-group"><label>Shares</label><input type="number" id="sShares" min="0" placeholder="0"/></div>
+            <div class="form-group"><label>Total Views</label><input type="number" id="sViews" min="0" placeholder="0"/></div>
+            <div class="form-group"><label>Saves / Bookmarks</label><input type="number" id="sSaves" min="0" placeholder="0"/></div>
+            <div class="form-group"><label>Stories Posted</label><input type="number" id="sStories" min="0" placeholder="0"/></div>
+            <div class="form-group"><label>Live Sessions</label><input type="number" id="sLive" min="0" placeholder="0"/></div>
+          </div>
+        </div>
+        <!-- APPEARANCE TAB -->
+        <div class="settings-tab-panel" id="stab-appearance">
+          <h3 class="stab-title">Appearance</h3>
+          <div class="appearance-options">
+            <div class="appear-row">
+              <div><strong>Dark Mode</strong><p class="hint">Toggle dark/light theme</p></div>
+              <label class="toggle"><input type="checkbox" id="sDarkMode"/><span class="tog-slider"></span></label>
+            </div>
+            <div class="appear-row">
+              <div><strong>Compact Mode</strong><p class="hint">Reduce spacing in sidebar</p></div>
+              <label class="toggle"><input type="checkbox" id="sCompact"/><span class="tog-slider"></span></label>
+            </div>
+            <div class="appear-row">
+              <div><strong>Accent Color</strong><p class="hint">Primary interface color</p></div>
+              <div class="color-swatches" id="colorSwatches"></div>
+            </div>
+          </div>
+        </div>
+        <!-- PRIVACY TAB -->
+        <div class="settings-tab-panel" id="stab-privacy">
+          <h3 class="stab-title">Privacy & Status</h3>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Account Status</label>
+              <select id="sStatus">
+                <option value="active">🟢 Active</option>
+                <option value="away">🟡 Away</option>
+                <option value="busy">🔴 Busy</option>
+                <option value="offline">⚫ Offline</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Account Visibility</label>
+              <select id="sVisibility">
+                <option value="public">🌐 Public</option>
+                <option value="private">🔒 Private</option>
+                <option value="friends">👥 Friends Only</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Account Type</label>
+              <select id="sAccType">
+                <option value="personal">Personal</option>
+                <option value="business">Business</option>
+                <option value="creator">Creator</option>
+                <option value="founder">Founder</option>
+              </select>
+            </div>
+          </div>
+          <div class="appear-options">
+            <div class="appear-row"><div><strong>Show Follower Count</strong></div><label class="toggle"><input type="checkbox" id="sShowFollowers" checked/><span class="tog-slider"></span></label></div>
+            <div class="appear-row"><div><strong>Allow Messages</strong></div><label class="toggle"><input type="checkbox" id="sAllowMsg" checked/><span class="tog-slider"></span></label></div>
+            <div class="appear-row"><div><strong>Show Online Status</strong></div><label class="toggle"><input type="checkbox" id="sShowStatus" checked/><span class="tog-slider"></span></label></div>
+          </div>
+        </div>
+        <!-- DANGER TAB -->
+        <div class="settings-tab-panel" id="stab-danger">
+          <h3 class="stab-title" style="color:var(--red)">Danger Zone</h3>
+          <div class="danger-block">
+            <div><strong>Reset All Settings</strong><p class="hint">Restore default settings (does not delete data)</p></div>
+            <button class="btn-danger" onclick="resetSettings()">Reset</button>
+          </div>
+          <div class="danger-block">
+            <div><strong>Clear All Users</strong><p class="hint">Permanently delete all user accounts</p></div>
+            <button class="btn-danger" onclick="clearAllUsers()">Clear Users</button>
+          </div>
+          <div class="danger-block">
+            <div><strong>Export All Data</strong><p class="hint">Download all dashboard data as JSON</p></div>
+            <button class="btn-outline" onclick="exportAll()"><i class="fas fa-download"></i> Export JSON</button>
+          </div>
+        </div>
+        <!-- SAVE BTN -->
+        <div class="settings-save-row">
+          <button class="btn-red large" onclick="saveAllSettings()"><i class="fas fa-save"></i> Save All Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end main-wrap -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- ADD USER MODAL -->
+<div class="modal-bg" id="addUserModal">
+  <div class="modal-box large">
+    <div class="modal-hdr"><h3><i class="fas fa-user-plus"></i> Add New User</h3><button class="modal-x" onclick="closeModal('addUserModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="modal-pic-row">
+        <div class="modal-pic-preview-wrap">
+          <img id="newUserPicPreview" src="" class="modal-pic-preview"/>
+          <label class="modal-pic-label" for="newUserPicInput"><i class="fas fa-camera"></i></label>
+          <input type="file" id="newUserPicInput" accept="image/*" hidden/>
+        </div>
+        <div class="modal-cover-preview-wrap">
+          <div class="modal-cover-preview" id="newUserCoverPreview"></div>
+          <label class="modal-cover-label" for="newUserCoverInput"><i class="fas fa-image"></i> Cover</label>
+          <input type="file" id="newUserCoverInput" accept="image/*" hidden/>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-group"><label>Full Name *</label><input id="nuName" type="text" placeholder="Full name"/></div>
+        <div class="form-group"><label>Username</label><input id="nuUsername" type="text" placeholder="@username"/></div>
+        <div class="form-group"><label>Email *</label><input id="nuEmail" type="email" placeholder="email@example.com"/></div>
+        <div class="form-group"><label>Phone</label><input id="nuPhone" type="tel" placeholder="+880…"/></div>
+        <div class="form-group"><label>Location</label><input id="nuLocation" type="text" placeholder="City, Country"/></div>
+        <div class="form-group"><label>Joined Date</label><input id="nuJoined" type="date"/></div>
+        <div class="form-group"><label>Total Posts</label><input id="nuPosts" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label>Followers</label><input id="nuFollowers" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label>Following</label><input id="nuFollowing" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label>Likes</label><input id="nuLikes" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label>Status</label>
+          <select id="nuStatus"><option value="active">🟢 Active</option><option value="away">🟡 Away</option><option value="busy">🔴 Busy</option><option value="offline">⚫ Offline</option></select>
+        </div>
+        <div class="form-group"><label>Account Type</label>
+          <select id="nuAccType"><option value="personal">Personal</option><option value="business">Business</option><option value="creator">Creator</option></select>
+        </div>
+        <div class="form-group full"><label>Bio</label><textarea id="nuBio" rows="2" placeholder="Short bio…"></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn-outline" onclick="closeModal('addUserModal')">Cancel</button><button class="btn-red" onclick="saveNewUser()"><i class="fas fa-check"></i> Add User</button></div>
+  </div>
+</div>
+
+<!-- USER DETAIL MODAL -->
+<div class="modal-bg" id="userDetailModal">
+  <div class="modal-box xlarge">
+    <div class="modal-hdr"><h3 id="udmTitle">User Profile</h3><button class="modal-x" onclick="closeModal('userDetailModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="userDetailBody"></div>
+    <div class="modal-footer" id="userDetailFooter"></div>
+  </div>
+</div>
+
+<!-- EDIT USER MODAL -->
+<div class="modal-bg" id="editUserModal">
+  <div class="modal-box large">
+    <div class="modal-hdr"><h3><i class="fas fa-edit"></i> Edit User</h3><button class="modal-x" onclick="closeModal('editUserModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="editUserBody"></div>
+    <div class="modal-footer"><button class="btn-outline" onclick="closeModal('editUserModal')">Cancel</button><button class="btn-red" onclick="saveEditUser()"><i class="fas fa-save"></i> Save</button></div>
+  </div>
+</div>
+
+<!-- ADD POST MODAL -->
+<div class="modal-bg" id="addPostModal">
+  <div class="modal-box">
+    <div class="modal-hdr"><h3><i class="fas fa-pen-nib"></i> New Post</h3><button class="modal-x" onclick="closeModal('addPostModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label>Post Title *</label><input id="npTitle" type="text" placeholder="Post title…"/></div>
+        <div class="form-group full"><label>Content</label><textarea id="npContent" rows="3" placeholder="Write post content…"></textarea></div>
+        <div class="form-group"><label>Category</label><select id="npCat"><option>General</option><option>Technology</option><option>Travel</option><option>Lifestyle</option><option>Business</option></select></div>
+        <div class="form-group"><label>Likes</label><input id="npLikes" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label>Comments</label><input id="npComments" type="number" min="0" placeholder="0"/></div>
+        <div class="form-group"><label>Shares</label><input id="npShares" type="number" min="0" placeholder="0"/></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn-outline" onclick="closeModal('addPostModal')">Cancel</button><button class="btn-red" onclick="savePost()"><i class="fas fa-paper-plane"></i> Publish</button></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- CONFIRM DIALOG -->
+<div class="modal-bg" id="confirmModal">
+  <div class="modal-box small">
+    <div class="modal-hdr"><h3 id="confirmTitle">Confirm</h3><button class="modal-x" onclick="closeModal('confirmModal')"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body"><p id="confirmMsg" style="color:var(--text-muted);line-height:1.6"></p></div>
+    <div class="modal-footer"><button class="btn-outline" onclick="closeModal('confirmModal')">Cancel</button><button class="btn-danger" id="confirmOkBtn">Confirm</button></div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
