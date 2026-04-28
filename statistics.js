@@ -1,0 +1,1 @@
+// Statistics page - implemented in posts.js as renderStatistics()
